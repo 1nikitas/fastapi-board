@@ -10,6 +10,7 @@ from db.session import get_db
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import Request
+from fastapi import Response
 from fastapi import responses
 from fastapi import status
 from fastapi.security.utils import get_authorization_scheme_param
@@ -25,10 +26,26 @@ router = APIRouter(include_in_schema=False)
 
 @router.get("/")
 async def home(request: Request, db: Session = Depends(get_db), msg: str = None):
-    jobs = list_jobs(db=db)
-    return templates.TemplateResponse(
-        "general_pages/homepage.html", {"request": request, "jobs": jobs, "msg": msg}
-    )
+    print(request.__dict__)
+    if request.cookies.get("access_token"):
+        jobs = list_jobs(db=db)
+        return templates.TemplateResponse(
+            "general_pages/homepage.html", {"request": request, "jobs": jobs, "msg": msg, 'logged': True}
+        )
+    else:
+
+        return responses.RedirectResponse(
+            f"/login/", status_code=status.HTTP_302_FOUND
+        )
+
+@router.get("/logout")
+async def logout(request: Request, response: Response, msg: str = None):
+    response = templates.TemplateResponse("auth/login.html",
+                                          {"request": request, 'msg': "Logged out!"})
+    response.delete_cookie("access_token")
+    return response
+
+
 
 
 @router.get("/details/{id}")

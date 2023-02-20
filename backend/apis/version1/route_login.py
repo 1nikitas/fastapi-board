@@ -1,5 +1,5 @@
 from datetime import timedelta
-
+from fastapi import Request
 from apis.utils import OAuth2PasswordBearerWithCookie
 from core.config import settings
 from core.hashing import Hasher
@@ -31,7 +31,6 @@ def authenticate_user(username: str, password: str, db: Session = Depends(get_db
     if not Hasher.verify_password(password, user.hashed_password):
         return False
     return user
-
 
 @router.post("/token", response_model=Token)
 def login_for_access_token(
@@ -79,3 +78,5 @@ def get_current_user_from_token(
     if user is None:
         raise credentials_exception
     return user
+
+
