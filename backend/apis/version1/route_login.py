@@ -79,4 +79,20 @@ def get_current_user_from_token(
         raise credentials_exception
     return user
 
+def is_authenticated(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get('access_token')
+    user = get_current_user_from_token(token)
 
+    if not user:
+        return False
+
+    return True
+
+def is_a_superuser(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get('access_token')
+    user = get_current_user_from_token(token)
+
+    if not user.is_superuser:
+        return False
+
+    return True

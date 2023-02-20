@@ -18,7 +18,7 @@ from fastapi.templating import Jinja2Templates
 from schemas.jobs import JobCreate
 from sqlalchemy.orm import Session
 from webapps.jobs.forms import JobCreateForm
-
+from fastapi.responses import RedirectResponse
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter(include_in_schema=False)
@@ -40,8 +40,9 @@ async def home(request: Request, db: Session = Depends(get_db), msg: str = None)
 
 @router.get("/logout")
 async def logout(request: Request, response: Response, msg: str = None):
-    response = templates.TemplateResponse("auth/login.html",
-                                          {"request": request, 'msg': "Logged out!"})
+    response = RedirectResponse(
+            f"/login/", status_code=status.HTTP_302_FOUND
+        )
     response.delete_cookie("access_token")
     return response
 

@@ -1,6 +1,5 @@
 from typing import List
 from typing import Optional
-
 from apis.version1.route_login import get_current_user_from_token
 from db.models.users import User
 from db.repository.jobs import create_new_job
