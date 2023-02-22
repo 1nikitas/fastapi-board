@@ -1,0 +1,44 @@
+{% extends "shared/base.html" %}
+
+{% block content %}
+
+{% with msg=msg %}
+{% include "components/alerts.html" %}
+{% endwith %}
+
+<table class="ui celled table">
+  <thead>
+      <tr><th>Name</th>
+      <th>subject</th>
+      <th>Hour Price</th>
+      <th>Day</th>
+          <th>Duration</th>
+      <th>Active</th>
+      
+  </tr></thead>
+  <tbody>
+  {% for client in all_clients %}
+    <tr>
+      <td data-label="Name">{{ client.name }}</td>
+      <td data-label="Name">{{ client.subject }}</td>
+      <td data-label="Name">{{ client.hour_price }}</td>
+      <td data-label="Name">{{ client.day }}</td>
+      {% if client.is_active == True %}
+      <td><button class="ui negative basic button">Deactivate</button></td>
+      {% else %}
+      <td><button class="ui positive  basic button">Activate</button></td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+  </tbody>
+   <tfoot class="full-width">
+    <tr>
+      <th></th>
+      <th colspan=" 4">
+        <div class="ui right floated small  icon button">
+            <a href="clients/create">Add student</a>
+        </div>
+    </tr>
+  </tfoot>
+</table>
+{% endblock %}
