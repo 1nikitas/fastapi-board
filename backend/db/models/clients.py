@@ -4,7 +4,8 @@ from sqlalchemy import Text
 from sqlalchemy import Integer
 from sqlalchemy import Float
 class Client(Base):
-    name = Column(Text, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(Text)
     subject = Column(Text)
     hour_price = Column(Integer)
     duration = Column(Float)

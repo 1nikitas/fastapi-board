@@ -6,27 +6,34 @@
 {% include "components/alerts.html" %}
 {% endwith %}
 
-<table class="ui celled table">
+<table class="ui inverted table">
   <thead>
-      <tr><th>Name</th>
-      <th>subject</th>
-      <th>Hour Price</th>
-      <th>Day</th>
+          <tr>
+          <th>Name</th>
+          <th>Subject</th>
+          <th>Hour Price</th>
+          <th>Day</th>
           <th>Duration</th>
-      <th>Active</th>
-      
-  </tr></thead>
+          <th>Active</th>
+          </tr>
+  </thead>
   <tbody>
   {% for client in all_clients %}
     <tr>
-      <td data-label="Name">{{ client.name }}</td>
-      <td data-label="Name">{{ client.subject }}</td>
-      <td data-label="Name">{{ client.hour_price }}</td>
-      <td data-label="Name">{{ client.day }}</td>
+          <td data-label="Name">{{ client.name }}</td>
+          <td data-label="Name">{{ client.subject }}</td>
+          <td data-label="Name">{{ client.hour_price }}</td>
+          <td data-label="Name">{{ client.day }}</td>
+          <td data-label="Name">{{ client.duration }}</td>
+
       {% if client.is_active == True %}
-      <td><button class="ui negative basic button">Deactivate</button></td>
+      <td>
+          <a class="ui negative basic button" href="/clients/deactivate/{{ client.id }}">Deactivate</a>
+      </td>
       {% else %}
-      <td><button class="ui positive  basic button">Activate</button></td>
+      <td>
+          <a class="ui positive basic button" href="/clients/activate/{{ client.id }}">Activate</a>
+      </td>
       {% endif %}
     </tr>
   {% endfor %}
@@ -34,7 +41,7 @@
    <tfoot class="full-width">
     <tr>
       <th></th>
-      <th colspan=" 4">
+      <th colspan=" 5">
         <div class="ui right floated small  icon button">
             <a href="clients/create">Add student</a>
         </div>

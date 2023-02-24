@@ -1,36 +1,37 @@
 from datetime import date
 from datetime import datetime
 from typing import Optional
-
 from pydantic import BaseModel
 
 
 # shared properties
-class JobBase(BaseModel):
+class TaskBase(BaseModel):
     title: Optional[str] = None
-    company: Optional[str] = None
-    company_url: Optional[str] = None
-    location: Optional[str] = "Remote"
+    subject: Optional[str] = None
     description: Optional[str] = None
+    soft_deadline: Optional[str] = None
+    deadline: Optional[str] = None
+    assigned_to: Optional[str] = None
     date_posted: Optional[date] = datetime.now().date()
 
 
 # this will be used to validate data while creating a Job
-class JobCreate(JobBase):
+class TaskCreate(TaskBase):
     title: str
-    company: str
-    location: str
+    subject: str
     description: str
+    soft_deadline: str
+    deadline: str
+
 
 
 # this will be used to format the response to not to have id,owner_id etc
-class ShowJob(JobBase):
+class TaskShow(TaskBase):
     title: str
-    company: str
-    company_url: Optional[str]
-    location: str
+    subject: str
+    description: str
+    soft_deadline: str
+    deadline: str
     date_posted: date
-    description: Optional[str]
-
     class Config:  # to convert non dict obj to json
         orm_mode = True

@@ -24,7 +24,7 @@ class ClientCreateForm:
         if not self.hour_price:
             self.errors.append("No hour price")
         if not self.duration:
-            self.errors.append("No hour price")
+            self.errors.append("No duration")
         if not self.hour_price:
             self.errors.append("No hour price")
         if not self.day:

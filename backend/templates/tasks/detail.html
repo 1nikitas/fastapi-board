@@ -1,0 +1,51 @@
+{% extends "shared/base.html" %}
+
+
+{% block title %}
+  <title>Job Detail</title>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+  <div class="row">
+    <div class="col">
+      <h1 class="display-5">Homework Detail</h1>
+    </div>
+  </div>
+
+  <div class="row">
+      <table class="table table-striped table-hover">
+        <tbody>
+          <tr>
+            <th scope="row">Homework title</th>
+            <td colspan="2">{{task.title}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Subject</th>
+            <td colspan="2">{{task.subject}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Soft deadline</th>
+            <td colspan="2">{{task.soft_deadline}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Deadline</th>
+            <td colspan="2">{{task.deadline}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Assigned to</th>
+            <td colspan="2">{{task.assigned_to}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Data Published</th>
+            <td colspan="2">{{task.date_posted}}</td>
+          </tr>
+           <tr>
+            <th scope="row">Homework creater</th>
+            <td colspan="2">{{task.owner.username}}</td>
+          </tr>
+        </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

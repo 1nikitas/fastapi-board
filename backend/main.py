@@ -1,3 +1,5 @@
+import uvicorn
+
 from apis.base import api_router
 from core.config import settings
 from db.base import Base
@@ -41,3 +43,6 @@ async def app_startup():
 @app.on_event("shutdown")
 async def app_shutdown():
     await check_db_disconnected()
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

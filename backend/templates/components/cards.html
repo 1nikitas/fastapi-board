@@ -1,9 +1,36 @@
-<div class="card shadow p-3 mb-2 bg-body rounded" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title">{{obj.title}}</h5>
-    <p class="card-text">Company : {{obj.company}}</p>
-    <p class="card-text">Company URL : <a href="{{obj.company_url}}">{{obj.company_url}}</a></p>
-    <p class="card-text">Description : {{obj.description[:60]}}</p>
-    <a href="/details/{{obj.id}}" class="btn btn-primary">Read more</a>
+<!--<div class="card shadow p-3 mb-2 bg-body rounded" style="width: 18rem;">-->
+<!--  <div class="card-body">-->
+<!--    <h5 class="card-title">{{obj.title}}</h5>-->
+<!--    <p class="card-text">Company : {{obj.company}}</p>-->
+<!--    <p class="card-text">Company URL : <a href="{{obj.company_url}}">{{obj.company_url}}</a></p>-->
+<!--    <p class="card-text">Description : {{obj.description[:60]}}</p>-->
+<!--    <a href="/details/{{obj.id}}" class="btn btn-primary">Read more</a>-->
+<!--  </div>-->
+<!--</div>-->
+
+
+<div class="ui cards">
+  <div class="card">
+    <div class="content">
+      <img class="right floated mini ui image" src="{{ url_for('static', path='images/avatar.png') }}">
+      <div class="header">
+        {{ obj.title}}
+      </div>
+      <div class="meta">
+          Subject: {{obj.subject}}
+      </div>
+      <div class="meta">
+          Soft deadline: {{obj.soft_deadline}}
+      </div>
+      <div class="meta">
+          Deadline: {{obj.deadline}}
+      </div>
+    </div>
+
+    <div class="extra content">
+      <div class="ui two buttons">
+        <div class="ui basic green button">Send</div>
+        <a class="ui basic blue button" href="details/{{obj.id}}">Read more</a>
+      </div>
+    </div>
   </div>
-</div>
