@@ -1,6 +1,7 @@
 {% extends "shared/base.html" %}
 
 
+
 {% block title %}
   <title>Создание анкеты ученика</title>
 {% endblock %}
@@ -25,13 +26,43 @@
           <input type="text" required placeholder="Subject" name="subject" value="{{subject}}" class="form-control">
         </div>
         <div class="mb-3">
+          <input type="text" required placeholder="Time of a lesson" name="time" value="{{time}}" class="form-control">
+        </div>
+        <div class="mb-3">
           <input type="text" required placeholder="Hour price" name="hour_price" value="{{hour_price}}" class="form-control">
         </div>
         <div class="mb-3">
           <input type="text" required placeholder="Lesson duration" name="duration" value="{{duration}}" class="form-control">
         </div>
         <div class="mb-3">
-          <input type="text" required placeholder="Day of a lesson" name="day" value="{{day}}" class="form-control">
+          <script>
+          function setter() {
+              var elem_val = 0;
+
+              var go = document.getElementsByClassName('ui dropdown');
+              for (var i = 0; go[i]; i++) {
+
+                  elem_val = go[i].value;
+
+              }
+
+              document.getElementById("day").value = elem_val;
+
+          }
+
+          </script>
+          <input type="text" required placeholder="Day of a lesson" name="day" value="{{day}}" class="form-control" id="day">
+              <select class="ui dropdown" onchange="setter();">
+              <option value="Понедельник">Понедельник</option>
+              <option value="Вторник">Вторник</option>
+              <option value="Среда">Среда</option>
+              <option value="Четверг">Четверг</option>
+              <option value="Пятница">Пятница</option>
+              <option value="Суббота">Суббота</option>
+              <option value="Воскресенье">Воскресенье</option>
+
+
+            </select>
         </div>
         <div class="mb-3">
           <label for="exampleFormControlTextarea1" class="form-label">Description</label>

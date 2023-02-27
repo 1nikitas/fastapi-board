@@ -10,26 +10,31 @@
     {% include "components/alerts.html" %}
   {% endwith %}
   <div class="container">
+
   <div class="row">
   <h2 class="ui header">
   <i class="spinner loading graduation cap icon"></i>
   Your homework
   </h2>
+  </div>
 
-  <div class="row">
-      {% for task in tasks %}
-        <div class="col-lg-4 col-md-3 col-sm-10 mr-auto">
-          {% with obj=task %}
+
+<div class="ui stackable three column divided grid container">
+     <div class="row">
+    {% for task in tasks %}
+
+        <div class="column">
+           {% with obj=task %}
       		{% include "components/cards.html" %}
     	    {% endwith %}
-
-          {% if loop.index % 3 %}
-            </div>
-          {% else %}
-            </div></div><br><div class="row">
-          {% endif %}
-      {% endfor %}
+        </div>
+         {% if loop.index % 4 == 0 %}
+     </div><div class="row">
+         {% elif loop.index % 3 == 0 %}
+         </div>
+         {% endif %}
+    {% endfor %}
+    </div>
   </div>
-</div>
 
 {% endblock %}

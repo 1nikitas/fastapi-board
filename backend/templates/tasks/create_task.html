@@ -31,11 +31,38 @@
           <input type="text" required placeholder="Deadline" name="deadline" value="{{deadline}}" class="form-control">
         </div>
         <div class="mb-3">
-        <select class="ui search dropdown">
-          {% for client in all_clients %}
-            <option value="{{ client.name }}">{{ client.name }}</option>
-          {% endfor %}
-        </select>
+
+<script>
+function setter() {
+    var elem_val = 0;
+
+    var go = document.getElementsByClassName('ui dropdown');
+    for (var i = 0; go[i]; i++) {
+
+        elem_val = go[i].value;
+
+    }
+
+    document.getElementById("assigned_to").value = elem_val;
+
+}
+
+</script>
+
+
+
+  <div class="ui input focus">
+    <input placeholder="Client id"  name="assigned_to" value="{{assigned_to}}" id="assigned_to">
+
+  <select class="ui dropdown" onchange="setter();">
+    {% for client in all_clients %}
+    <option value="{{ client.id }}">{{ client.name }}</option>
+    {% endfor %}
+  </select>
+    </div>
+
+
+
         </div>
         <div class="mb-3">
           <label for="exampleFormControlTextarea1" class="form-label">Description</label>

@@ -46,3 +46,6 @@ def search_task(query: str, db: Session):
     tasks = db.query(Task).filter(Task.title.contains(query))
     return tasks
 
+def tasks_assigned_to_me(id: int, db: Session):
+    tasks = db.query(Task).filter(Task.assigned_to == id).all()
+    return tasks
