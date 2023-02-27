@@ -1,3 +1,12 @@
+.ui.simple.dropdown.item:hover,
+.ui.simple.dropdown.item.hovering {
+cursor: pointer;
+}
+
+.ui.dropdown {
+    transition: background .1s ease,box-shadow .1s ease,color .1s ease;
+}
+
 .highcharts-figure,
 .highcharts-data-table table {
   min-width: 360px;

@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
+
+from apis.version1.base import is_authorized
 from db.repository.clients import list_clients, deactivate_client_by_id, activate_client_by_id, \
     get_today_clients_amount, get_today_money_amount, get_today_lesson_time, get_cliet_by_id
 from fastapi import Request
@@ -14,7 +16,7 @@ from schemas.clients import CreateClient
 from fastapi import responses
 from db.models.clients import Client
 from db.repository.clients import delete_client_by_id, get_today_clients
-from apis.version1.base import is_authorized
+
 
 
 

@@ -1,5 +1,7 @@
+import aioredis as aioredis
 import uvicorn
-
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 from apis.base import api_router
 from core.config import settings
 from db.base import Base
@@ -10,6 +12,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from webapps.base import api_router as web_app_router
 
+REDIS_HOST = "redis://localhost"
 
 def include_router(app):
     app.include_router(api_router)
@@ -38,6 +41,9 @@ app = start_application()
 @app.on_event("startup")
 async def app_startup():
     await check_db_connected()
+    redis = aioredis.from_url(REDIS_HOST, encoding="ut8f", decode_responses=True)
+    FastAPICache.init(RedisBackend(redis), prefix='fastapi-cache')
+
 
 
 @app.on_event("shutdown")

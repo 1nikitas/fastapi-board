@@ -9,12 +9,13 @@
   {% with msg=msg %}
     {% include "components/alerts.html" %}
   {% endwith %}
-  <div class="container">
+
+  <div class="ui grid container">
 
   <div class="row">
+      <div class="column">
   <h2 class="ui header">
-  <i class="spinner loading graduation cap icon"></i>
-  Your homework
+ Homework
   </h2>
   </div>
 
@@ -37,4 +38,5 @@
     </div>
   </div>
 
+</div>
 {% endblock %}

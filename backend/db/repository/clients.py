@@ -90,7 +90,7 @@ def get_today_clients_amount(db: Session):
 
 def get_today_money_amount(db: Session):
     clients = db.query(Client).filter(Client.day == today_day).all()
-    money = int(sum([client.hour_price*client.duration for client in clients]))
+    money = int(sum([client.hour_price * client.duration for client in clients]))
     return money
 
 def get_today_lesson_time(db: Session):

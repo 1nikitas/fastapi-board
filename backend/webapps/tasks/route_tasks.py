@@ -19,11 +19,15 @@ from sqlalchemy.orm import Session
 from webapps.tasks.forms import TaskCreateForm
 from fastapi.responses import RedirectResponse
 from db.repository.clients import list_clients
-from apis.version1.base import is_authorized
+
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter(include_in_schema=False)
 
+def is_authorized(request: Request):
+    if request.cookies.get("access_token"):
+        return True
+    return False
 
 @router.get("/")
 async def home(request: Request, db: Session = Depends(get_db), msg: str = None):

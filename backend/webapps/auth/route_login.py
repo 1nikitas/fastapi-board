@@ -1,4 +1,4 @@
-from apis.version1.base import is_authorized
+
 from apis.version1.route_login import login_for_access_token
 from db.repository.tasks import list_tasks
 from db.session import get_db
@@ -17,6 +17,10 @@ from fastapi import Response
 templates = Jinja2Templates(directory="templates")
 router = APIRouter(include_in_schema=False)
 
+def is_authorized(request: Request):
+    if request.cookies.get("access_token"):
+        return True
+    return False
 
 @router.get("/login/")
 def login(request: Request):

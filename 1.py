@@ -1,3 +1,2 @@
-string = input()
-
-print("Шляп: " + str(string.count("шляп")) + ", " + "пальто: " + str(string.count("пальто")))
+import requests
+print(requests.get("https://fin-plan.org/lk/daily_events/").text)
