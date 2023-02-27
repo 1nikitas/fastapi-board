@@ -1,3 +1,4 @@
+from apis.version1.base import is_authorized
 from apis.version1.route_login import login_for_access_token
 from db.repository.tasks import list_tasks
 from db.session import get_db
@@ -19,7 +20,9 @@ router = APIRouter(include_in_schema=False)
 
 @router.get("/login/")
 def login(request: Request):
-    return templates.TemplateResponse("auth/login.html", {"request": request})
+    user_is_authorized= is_authorized(request)
+    if not user_is_authorized:
+        return templates.TemplateResponse("auth/login.html", {"request": request})
 
 
 @router.post("/login/")
@@ -34,8 +37,8 @@ async def login(request: Request, db: Session = Depends(get_db)):
             login_for_access_token(response=response, form_data=form, db=db)
             return response
         except HTTPException:
-
             form.__dict__.update(msg="")
             form.__dict__.get("errors").append("Incorrect Email or Password")
             return templates.TemplateResponse("auth/login.html", form.__dict__)
     # return templates.TemplateResponse("general_pages/homepage.html", form.__dict__)
+

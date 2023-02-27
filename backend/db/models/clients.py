@@ -9,6 +9,7 @@ class Client(Base):
     subject = Column(Text)
     hour_price = Column(Integer)
     duration = Column(Float)
+    time = Column(Text)
     is_active = Column(Boolean(), default=True)
     day = Column(Text)
     description = Column(Text, default="")

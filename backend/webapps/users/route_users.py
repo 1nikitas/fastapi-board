@@ -18,6 +18,7 @@ router = APIRouter(include_in_schema=False)
 
 @router.get("/register/")
 def register(request: Request):
+
     return templates.TemplateResponse("users/register.html", {"request": request})
 
 
@@ -38,3 +39,4 @@ async def register(request: Request, db: Session = Depends(get_db)):
             form.__dict__.get("errors").append("Duplicate username or email")
             return templates.TemplateResponse("users/register.html", form.__dict__)
     return templates.TemplateResponse("users/register.html", form.__dict__)
+

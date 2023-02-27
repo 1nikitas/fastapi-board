@@ -1,0 +1,48 @@
+{% extends "shared/base.html" %}
+
+
+{% block title %}
+  <title>Homework Board</title>
+{% endblock %}
+
+{% block content %}
+  {% with msg=msg %}
+    {% include "components/alerts.html" %}
+  {% endwith %}
+  <div class="container">
+
+
+
+<table class="ui celled table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Subject</th>
+      <th>Price</th>
+      <th>Time</th>
+      <th>Duration</th>
+      <th>Is approved</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for client in clients%}
+      <tr>
+        <td>{{ client.name }}</td>
+        <td>{{ client.subject }}</td>
+        <td>{{ client.hour_price }}</td>
+        <td>{{ client.time }}</td>
+        <td>{{ client.duration }}</td>
+        <td>None</td>
+      </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr><th>{{ amount }}</th>
+      <th></th>
+    <th>{{ money }}</th>
+    <th></th>
+    <th>{{ sum_time }}</th>
+      <th></th>
+  </tr></tfoot>
+</table>
+{% endblock %}

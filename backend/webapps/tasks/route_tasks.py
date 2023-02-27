@@ -1,7 +1,7 @@
 from typing import Optional
 from apis.version1.route_login import get_current_user_from_token
 from db.models.users import User
-from db.repository.tasks import create_new_task
+from db.repository.tasks import create_new_task, tasks_assigned_to_me
 from db.repository.tasks import list_tasks
 from db.repository.tasks import retreive_task
 from db.repository.tasks import search_task
@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session
 from webapps.tasks.forms import TaskCreateForm
 from fastapi.responses import RedirectResponse
 from db.repository.clients import list_clients
+from apis.version1.base import is_authorized
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter(include_in_schema=False)
@@ -28,12 +29,14 @@ router = APIRouter(include_in_schema=False)
 async def home(request: Request, db: Session = Depends(get_db), msg: str = None):
     print(request.__dict__)
     if request.cookies.get("access_token"):
-        tasks = list_tasks(db=db)
+        token = request.cookies.get('access_token').split()[1]
+        id = get_current_user_from_token(token=token, db=db).id
+        tasks = tasks_assigned_to_me(id=id, db=db)
+        print(id)
         return templates.TemplateResponse(
             "general_pages/homepage.html", {"request": request, "tasks": tasks, "msg": msg, 'logged': True}
         )
     else:
-
         return responses.RedirectResponse(
             f"/login/", status_code=status.HTTP_302_FOUND
         )
@@ -51,16 +54,18 @@ async def logout(request: Request, response: Response, msg: str = None):
 
 @router.get("/details/{id}")
 def task_detail(id: int, request: Request, db: Session = Depends(get_db)):
+    user_is_authorized = is_authorized(request)
     task = retreive_task(id=id, db=db)
     return templates.TemplateResponse(
-        "tasks/detail.html", {"request": request, "task": task}
+        "tasks/detail.html", {"request": request, "task": task, 'logged': user_is_authorized}
     )
 
 
 @router.get("/post-a-task/")
 def create_task(request: Request, db: Session = Depends(get_db)):
+    user_is_authorized = is_authorized(request)
     all_clients = list_clients(db=db)
-    return templates.TemplateResponse("tasks/create_task.html", {"request": request, "all_clients": all_clients })
+    return templates.TemplateResponse("tasks/create_task.html", {"request": request, "all_clients": all_clients,  'logged': user_is_authorized})
 
 
 @router.post("/post-a-task/")
@@ -75,6 +80,7 @@ async def create_task(request: Request, db: Session = Depends(get_db)):
                 token
             )  # scheme will hold "Bearer" and param will hold actual token value
             current_user: User = get_current_user_from_token(token=param, db=db)
+            print(form.__dict__)
             task = TaskCreate(**form.__dict__)
             task = create_new_task(task=task, db=db, owner_id=current_user.id)
             return responses.RedirectResponse(
@@ -91,9 +97,10 @@ async def create_task(request: Request, db: Session = Depends(get_db)):
 
 @router.get("/delete-task/")
 def show_tasks_to_delete(request: Request, db: Session = Depends(get_db)):
+    user_is_authorized = is_authorized(request)
     tasks = list_tasks(db=db)
     return templates.TemplateResponse(
-        "tasks/show_tasks_to_delete.html", {"request": request, "tasks": tasks}
+        "tasks/show_tasks_to_delete.html", {"request": request, "tasks": tasks,   'logged': user_is_authorized}
     )
 
 
@@ -101,7 +108,25 @@ def show_tasks_to_delete(request: Request, db: Session = Depends(get_db)):
 def search(
     request: Request, db: Session = Depends(get_db), query: Optional[str] = None
 ):
+    user_is_authorized = is_authorized(request)
     tasks = search_task(query, db=db)
     return templates.TemplateResponse(
-        "general_pages/homepage.html", {"request": request, "tasks": tasks}
+        "general_pages/homepage.html", {"request": request, "tasks": tasks,   'logged': user_is_authorized}
+    )
+
+@router.get("/all-homeworks/")
+def get_all_homeworks(request: Request, db: Session = Depends(get_db)):
+    tasks  = list_tasks(db=db)
+    user_is_authorized = is_authorized(request)
+    return templates.TemplateResponse('general_pages/homepage.html',
+                                      {'request': request,
+                                       'logged': user_is_authorized,
+                                       'tasks': tasks})
+
+@router.get("/all-homeworks/details/{id}")
+def task_detail(id: int, request: Request, db: Session = Depends(get_db)):
+    user_is_authorized = is_authorized(request)
+    task = retreive_task(id=id, db=db)
+    return templates.TemplateResponse(
+        "tasks/detail.html", {"request": request, "task": task, 'logged': user_is_authorized}
     )

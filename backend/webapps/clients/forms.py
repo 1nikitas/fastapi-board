@@ -13,6 +13,7 @@ class ClientCreateForm:
         self.hour_price: Optional[int] = None
         self.duration: Optional[float] = None
         self.is_active: Optional[bool] = True
+        self.time: Optional[str] = None
         self.day: Optional[str] = None
         self.description: Optional[str] = ""
 
@@ -31,6 +32,8 @@ class ClientCreateForm:
             self.errors.append("No hour price")
         if not self.description:
             self.errors.append("No hour price")
+        if not self.time:
+            self.errors.append('No time')
         if not self.errors:
             return True
         return False
@@ -42,5 +45,6 @@ class ClientCreateForm:
         self.hour_price = form.get('hour_price')
         self.duration = form.get('duration')
         self.is_active = True
+        self.time = form.get('time')
         self.day = form.get('day')
         self.description = form.get('description')
