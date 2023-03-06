@@ -36,7 +36,6 @@ async def home(request: Request, db: Session = Depends(get_db), msg: str = None)
         token = request.cookies.get('access_token').split()[1]
         id = get_current_user_from_token(token=token, db=db).id
         tasks = tasks_assigned_to_me(id=id, db=db)
-        print(id)
         return templates.TemplateResponse(
             "general_pages/homepage.html", {"request": request, "tasks": tasks, "msg": msg, 'logged': True}
         )

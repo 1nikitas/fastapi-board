@@ -74,7 +74,9 @@ def delete_user_by_id(id: int, db: Session):
     db.refresh(client)
     return 1
 
-
+def get_all_active_clients(db: Session):
+    clients = db.query(Client).filter(Client.is_active == True).all()
+    return clients
 def get_today_clients(db: Session):
 
     today_clients = db.query(Client).filter(Client.day == today_day).all()
@@ -101,3 +103,8 @@ def get_today_lesson_time(db: Session):
 def get_cliet_by_id(id: int, db: Session):
     client = db.query(Client).filter(Client.id == id).first()
     return client
+
+def get_money_by_day(day: str, db: Session):
+    clients = db.query(Client).filter(Client.day == day).filter(Client.is_active==True).all()
+    money = int(sum([client.hour_price * client.duration for client in clients]))
+    return money

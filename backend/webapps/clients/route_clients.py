@@ -15,11 +15,7 @@ from db.repository.clients import create_client
 from schemas.clients import CreateClient
 from fastapi import responses
 from db.models.clients import Client
-from db.repository.clients import delete_client_by_id, get_today_clients
-
-
-
-
+from db.repository.clients import delete_client_by_id, get_today_clients, get_all_active_clients
 
 router = APIRouter()
 templates = Jinja2Templates(directory='templates')
@@ -126,5 +122,4 @@ def get_client_info(id: int, request: Request, db: Session = Depends(get_db)):
                                        "logged": user_is_authorized,
                                        'client': client
                                        })
-
 

@@ -1,4 +1,6 @@
-import aioredis as aioredis
+import asyncio
+
+from redis import asyncio as aioredis
 import uvicorn
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
@@ -11,21 +13,21 @@ from db.utils import check_db_disconnected
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from webapps.base import api_router as web_app_router
+from notifications.telegram.bot import dp
+from aiogram import executor
 
-REDIS_HOST = "redis://localhost"
+
+REDIS_HOST = "redis://localhost:6379"
 
 def include_router(app):
     app.include_router(api_router)
     app.include_router(web_app_router)
 
-
 def configure_static(app):
     app.mount("/static", StaticFiles(directory="static"), name="static")
 
-
 def create_tables():
     Base.metadata.create_all(bind=engine)
-
 
 def start_application():
     app = FastAPI(title=settings.PROJECT_NAME, version=settings.PROJECT_VERSION)
@@ -34,17 +36,13 @@ def start_application():
     create_tables()
     return app
 
-
 app = start_application()
-
 
 @app.on_event("startup")
 async def app_startup():
     await check_db_connected()
     redis = aioredis.from_url(REDIS_HOST, encoding="ut8f", decode_responses=True)
     FastAPICache.init(RedisBackend(redis), prefix='fastapi-cache')
-
-
 
 @app.on_event("shutdown")
 async def app_shutdown():

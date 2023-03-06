@@ -1,24 +1,76 @@
-# from email.message import EmailMessage
-# import smtplib
-# from celery import Celery
-# from celery.schedules import crontab
-# from flower.app import Flower
-#
-REDIS_HOST = "redis://localhost"
-# celery = Celery('notifications', broker=REDIS_HOST)
-#
+from email.message import EmailMessage
+import smtplib
+
+import pytz
+from celery import Celery, shared_task
+from celery.schedules import crontab
+from celery import shared_task
+from celery.utils.log import get_task_logger
+
+import celery
+
+app = celery.Celery('email_sender', broker='redis://127.0.0.1:6379')
+
+@app.task
+def show(arg):
+    print(arg)
+
+app.conf.beat_schedule = {
+    'task-name': {
+        'task': 'email_sender.show',  # instead 'show'
+        'schedule':crontab(hour=21, minute=14, day_of_week=6), #6.0,
+        'args': (42,),
+    },
+}
+
+
+app.conf.timezone = 'Europe/Moscow'
+
+
+
+
+
 # celery.conf.beat_schedule = {
 #     'add-every-30-seconds': {
-#         'task': 'email_sender',
-#         'schedule': 60.0
+#         'task': 'tasks.add',
+#         'schedule': 30.0,
+#         'args': (16, 16)
 #     },
 # }
 #
+# celery.conf.timezone = 'UTC'
+#
+# # celery.conf.beat_schedule = {
+# #     'add-every-30-seconds': {
+# #         'task': 'email_sender',
+# #         'schedule': 60.0
+# #     },
+# # }
+#
+# @celery.on_after_configure.connect
+# def setup_periodic_tasks(sender, **kwargs):
+#     # Calls test('hello') every 10 seconds.
+#     sender.add_periodic_task(10.0, send_email_notification, name='add every 10')
+#
+#     # Calls test('world') every 30 seconds
+#     sender.add_periodic_task(30.0, test.s('world'), expires=10)
+#
+# celery.autodiscover_tasks()
+# @celery.task
+# def test(arg):
+#     print(arg)
+#
+# @celery.task
+# def add(x, y):
+#     z = x + y
+#     print(z)
+#
+# #
 # SMTP_HOST = "smtp.gmail.com"
 # SMTP_PORT = 465
 #
 # SMTP_USER = "n.kiselev2002@gmail.com"
-# SMTP_PASSWORD = "rmadxekcpagwsaci"
+# SMTP_PASSWORD = "nodopeqeookszgmn"
 #
 #
 # def get_email_template(username: str = None):
@@ -43,7 +95,8 @@ REDIS_HOST = "redis://localhost"
 #     with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT) as server:
 #         server.login(SMTP_USER, SMTP_PASSWORD)
 #         server.send_message(email)
+
+
 #
-# send_email_notification()
-
-
+#
+#
