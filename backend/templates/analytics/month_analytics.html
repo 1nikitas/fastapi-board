@@ -1,0 +1,95 @@
+{% extends "shared/base.html" %}
+
+{% block content %}
+<body>
+	<!-- Основной контейнер страницы -->
+	<div class="ui container">
+		<!-- Заголовок страницы -->
+		<div class="ui segment">
+			<h1 class="ui header">Month income from lessons</h1>
+		</div>
+		<!-- График -->
+		<canvas id="myChart"></canvas>
+		<div class="ui container">
+			<div class="ui three column grid">
+			<!-- Колонка 1 -->
+			<div class="column">
+				<div class="ui centered card">
+					<div class="ui segment">
+					<h3 class="ui header">Прибыль за текущий месяц:</h3>
+					<p>$15,000</p>
+					</div>
+				</div>
+			</div>
+			<div class="column">
+				<div class="ui centered card">
+					<div class="ui segment">
+					<h3 class="ui header">Expected income for this month:</h3>
+					<p> {{ expected_money }} ₽</p>
+					</div>
+				</div>
+			</div>
+			<div class="column">
+				<div class="ui centered card">
+					<div class="ui segment">
+					<h3 class="ui header">Прибыль за текущий месяц:</h3>
+					<p>$15,000</p>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<!-- Подключаем файлы скриптов Semantic UI -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+	<!-- Подключаем файлы скриптов для графика -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+	<script>
+		// Определяем данные для графика
+		var salesData = {
+			labels: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь"],
+			datasets: [
+				{
+					label: "Money",
+					fill: false,
+					lineTension: 0.1,
+					backgroundColor: "rgba(75,192,192,0.4)",
+					borderColor: "rgba(75,192,192,1)",
+					borderCapStyle: 'butt',
+					borderDash: [],
+					borderDashOffset: 0.0,
+					borderJoinStyle: 'miter',
+					pointBorderColor: "rgba(75,192,192,1)",
+					pointBackgroundColor: "#fff",
+					pointBorderWidth: 1,
+					pointHoverRadius: 5,
+					pointHoverBackgroundColor: "rgba(75,192,192,1)",
+					pointHoverBorderColor: "rgba(220,220,220,1)",
+					pointHoverBorderWidth: 2,
+					pointRadius: 1,
+					pointHitRadius: 10,
+					data: [65, 59, 80, 81, 56, 55],
+				}
+			]
+		};
+
+		// Определяем параметры для графика
+		var chartOptions = {
+			responsive: true,
+			scales: {
+				yAxes: [{
+					ticks: {
+						beginAtZero: true
+					}
+				}]
+			}
+		};
+
+		// Создаем новый график на основе определенных данных и параметров
+		var lineChart = new Chart(document.getElementById("myChart"),{
+			type: 'line',
+			data: salesData,
+			options: chartOptions
+		});
+	</script>
+{% endblock %}
