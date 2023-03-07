@@ -9,22 +9,10 @@ from celery.utils.log import get_task_logger
 
 import celery
 
-app = celery.Celery('email_sender', broker='redis://127.0.0.1:6379')
-
-@app.task
-def show(arg):
-    print(arg)
-
-app.conf.beat_schedule = {
-    'task-name': {
-        'task': 'email_sender.show',  # instead 'show'
-        'schedule':crontab(hour=21, minute=14, day_of_week=6), #6.0,
-        'args': (42,),
-    },
-}
 
 
-app.conf.timezone = 'Europe/Moscow'
+
+
 
 
 

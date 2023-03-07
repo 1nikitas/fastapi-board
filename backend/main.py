@@ -1,4 +1,3 @@
-import asyncio
 
 from redis import asyncio as aioredis
 import uvicorn
@@ -13,12 +12,13 @@ from db.utils import check_db_disconnected
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from webapps.base import api_router as web_app_router
-from notifications.telegram.bot import dp
-from aiogram import executor
-
-
+from notifications.telegram.bot import bot, dp
+from aiogram import types, Dispatcher, Bot
+from notifications.telegram.bot import TOKEN
 REDIS_HOST = "redis://localhost:6379"
-
+WEBHOOK_PATH = f'/bot/{TOKEN}'
+WEBHOOK_URL = f'https://4c92-212-45-15-105.eu.ngrok.io' + WEBHOOK_PATH
+print(WEBHOOK_URL)
 def include_router(app):
     app.include_router(api_router)
     app.include_router(web_app_router)
@@ -43,6 +43,20 @@ async def app_startup():
     await check_db_connected()
     redis = aioredis.from_url(REDIS_HOST, encoding="ut8f", decode_responses=True)
     FastAPICache.init(RedisBackend(redis), prefix='fastapi-cache')
+    webhook_info = await bot.get_webhook_info()
+    if webhook_info.url != WEBHOOK_URL:
+        await bot.set_webhook(
+            url=WEBHOOK_URL
+        )
+
+@app.post(WEBHOOK_PATH)
+async def bot_webhook(update: dict):
+    telegram_update = types.Update(**update)
+    Dispatcher.set_current(dp)
+    Bot.set_current(bot)
+    await dp.process_update(telegram_update)
+
+
 
 @app.on_event("shutdown")
 async def app_shutdown():
