@@ -17,7 +17,7 @@ from aiogram import types, Dispatcher, Bot
 from notifications.telegram.bot import TOKEN
 REDIS_HOST = "redis://localhost:6379"
 WEBHOOK_PATH = f'/bot/{TOKEN}'
-WEBHOOK_URL = f'https://4c92-212-45-15-105.eu.ngrok.io' + WEBHOOK_PATH
+WEBHOOK_URL = f'https://e2d3-212-45-15-105.eu.ngrok.io' + WEBHOOK_PATH
 print(WEBHOOK_URL)
 def include_router(app):
     app.include_router(api_router)
