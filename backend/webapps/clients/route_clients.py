@@ -17,6 +17,8 @@ from fastapi import responses
 from db.models.clients import Client
 from db.repository.clients import delete_client_by_id, get_today_clients, get_all_active_clients
 
+from db.repository.lessons import create_lesson_today, get_today_lessons
+
 router = APIRouter()
 templates = Jinja2Templates(directory='templates')
 
@@ -101,14 +103,17 @@ async def delete_user(id: int, request: Request, db: Session = Depends(get_db)):
 @router.get('/clients/today')
 def today_clients(request: Request, db: Session = Depends(get_db)):
     clients = get_today_clients(db=db)
+    for client in clients:
+        create_lesson_today(client, db)
     user_is_authorized = is_authorized(request)
     amount = get_today_clients_amount(db=db)
     money = get_today_money_amount(db=db)
     sum_time = get_today_lesson_time(db=db)
+    lessons = get_today_lessons(db=db)
     return templates.TemplateResponse('clients/today_clients.html',
                                       {'request': request,
                                        "logged": user_is_authorized,
-                                       "clients": clients,
+                                       "clients": lessons,
                                        "money": money,
                                        "amount": amount,
                                        'sum_time': sum_time})

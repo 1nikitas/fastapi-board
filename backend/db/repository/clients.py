@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session, sessionmaker
 from db.models.clients import Client
 from datetime import datetime, date
 
+from db.repository.lessons import create_lesson_today
+
 today = datetime.today()
 
 def get_today_day(day: date) -> str:
@@ -80,6 +82,8 @@ def get_all_active_clients(db: Session):
 def get_today_clients(db: Session):
 
     today_clients = db.query(Client).filter(Client.day == today_day).all()
+    for client in today_clients:
+        create_lesson_today(client, db=db)
     return today_clients
 
 def get_today_clients_amount(db: Session):

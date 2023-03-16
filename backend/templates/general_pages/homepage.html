@@ -10,38 +10,317 @@
     {% include "components/alerts.html" %}
   {% endwith %}
 
+<style>
+.board {
+   display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.column {
+  width: 300px;
+  margin-right: 20px;
+  border-radius: 5px;
+  background-color: #e2e4e6;
+}
+
+.column-header {
+  padding: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: #f7f7f7;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom: 1px solid #ccc;
+}
+
+.card {
+  padding: 10px;
+  margin: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 1px 0 rgba(9, 30, 66, 0.25);
+}
+
+.card:hover {
+  cursor: grab;
+}
+
+.card:active {
+  cursor: grabbing;
+  background-color: #f5f5f5;
+}
+
+
+
+  @media only screen and (min-width: 600px) {
+    .column {
+      width: calc(40% - 20px);
+      margin: 0 10px 20px 0;
+    }
+</style>
+
+<script>
+document.addEventListener("dragstart", function(event) {
+  if (event.target.classList.contains("card")) {
+    draggedCard = event.target;
+    event.dataTransfer.setData("text/plain", event.target.textContent);
+    event.target.style.opacity = "0.5";
+  }
+});
+
+document.addEventListener("dragend", function(event) {
+  if (event.target.classList.contains("card")) {
+    event.target.style.opacity = "1";
+  }
+});
+
+document.addEventListener("dragenter", function(event) {
+  if (event.target.classList.contains("column")) {
+    event.target.style.border = "2px dotted #ccc";
+  }
+});
+
+document.addEventListener("dragleave", function(event) {
+  if (event.target.classList.contains("column")) {
+    event.target.style.border = "";
+  }
+});
+
+document.addEventListener("dragover", function(event) {
+event.dataTransfer.dropEffect = "move";
+  event.preventDefault();
+});
+
+document.addEventListener("drop", function(event) {
+  if (event.target.classList.contains("column") && draggedCard !== null) {
+    event.preventDefault();
+    event.target.appendChild(draggedCard);
+    draggedCard = null;
+  }
+});
+</script>
+
+
+<script>
+    $(document).ready(function() {
+  // Обработчик перемещения карточки между списками
+  $('.card-list').sortable({
+    connectWith: '.card-list',
+    stop: function(event, ui) {
+      var cardTitle = ui.item.text();
+      var newColumnTitle = ui.item.parent().siblings('.column-title').text();
+      var cardId = ui.item.attr('data-card-id');
+
+      // AJAX запрос на сервер для обновления данных
+      $.ajax({
+        url: '/update-card',
+        method: 'POST',
+        data: { cardId: cardId, columnTitle: newColumnTitle },
+        success: function(response) {
+          console.log('Название столбца обновлено');
+        },
+        error: function(error) {
+          console.log('Ошибка обновления названия столбца');
+        }
+      });
+    }
+  });
+});
+</script>
+
 <div class="ui container">
 		<!-- Заголовок страницы -->
-		<div class="ui segment">
-			<h1 class="ui header">Homeworks</h1>
-		</div>
-		<!-- Маленькие карточки с домашним заданием -->
-        {% for task in tasks %}
-                <div class="ui stackable grid">
-                    <div class="column">
-                        <div class="ui fluid card">
-                            <div class="content">
-                                <a class="header">Задание 1</a>
-                                <div class="meta">
-                                    <span class="date">Soft deadline: {{ task.soft_deadline }}</span>
-                                </div>
-                                <div class="meta">
-                                    <span class="date">Deadline: {{ task.deadline }}</span>
-                                </div>
-                                <div class="meta">
-                                    <span class="date">Срок сдачи: 10.03.2023</span>
-                                </div>
+		<div class="ui segment" style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 class="ui header">Homeworks</h1>
+            <div class="ui fitted slider checkbox">
+                <input type="checkbox">
+                <label></label>
+            </div>
+        </div>
+<!--		 Маленькие карточки с домашним заданием-->
+<!--        {% for task in tasks %}-->
+<!--                <div class="ui stackable grid">-->
+<!--                    <div class="board">-->
+<!--                        <div class="column">-->
+<!--                            <div class="ui fluid card">-->
+<!--                                <div class="content">-->
+<!--                                    <a class="header">Задание 1</a>-->
+<!--                                    <div class="meta">-->
+<!--                                        <span class="date">Soft deadline: {{ task.soft_deadline }}</span>-->
+<!--                                    </div>-->
+<!--                                    <div class="meta">-->
+<!--                                        <span class="date">Deadline: {{ task.deadline }}</span>-->
+<!--                                    </div>-->
+<!--                                    <div class="meta">-->
+<!--                                        <span class="date">Срок сдачи: 10.03.2023</span>-->
+<!--                                    </div>-->
 
-                            </div>
-                            <div class="extra content">
-                                <div class="ui two buttons">
-                                    <button class="ui basic green button">Сдать</button>
-                                    <a class="ui basic blue button" href="/details/{{ task.id }}">Подробности</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        {% endfor %}
+<!--                                </div>-->
+<!--                                <div class="extra content">-->
+<!--                                    <div class="ui two buttons">-->
+<!--                                        <button class="ui basic green button">Сдать</button>-->
+<!--                                        <a class="ui basic blue button" href="/details/{{ task.id }}">Подробности</a>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--        {% endfor %}-->
+
+  <div class="board">
+  <div class="column">
+    <div class="column-header">To do</div>
+    <div class="ui fluid small card" draggable="true">
+         <div class="content">
+          <a class="header">Задание 1</a>
+          <div class="meta">
+              <span class="date">Soft deadline: 1</span>
+          </div>
+          <div class="meta">
+              <span class="date">Deadline: 2</span>
+          </div>
+          <div class="meta">
+              <span class="date">Срок сдачи: 10.03.2023</span>
+          </div>
+          <div class="extra content">
+          <div class="ui two buttons">
+              <a class="ui basic blue button">Подробнее</a>
+          </div>
+          </div>
+           </div>
+    </div>
+    <div class="ui fluid small card" draggable="true">
+         <div class="content">
+          <a class="header">Задание 1</a>
+          <div class="meta">
+              <span class="date">Soft deadline: 1</span>
+          </div>
+          <div class="meta">
+              <span class="date">Deadline: 2</span>
+          </div>
+          <div class="meta">
+              <span class="date">Срок сдачи: 10.03.2023</span>
+          </div>
+          <div class="extra content">
+          <div class="ui two buttons">
+              <a class="ui basic blue button">Подробнее</a>
+          </div>
+          </div>
+           </div>
+    </div>
+
+  </div>
+  <div class="column">
+    <div class="column-header">In progress</div>
+     <div class="ui fluid small card" draggable="true">
+         <div class="content">
+          <a class="header">Задание 1</a>
+          <div class="meta">
+              <span class="date">Soft deadline: 1</span>
+          </div>
+          <div class="meta">
+              <span class="date">Deadline: 2</span>
+          </div>
+          <div class="meta">
+              <span class="date">Срок сдачи: 10.03.2023</span>
+          </div>
+          <div class="extra content">
+          <div class="ui two buttons">
+              <a class="ui basic blue button">Подробнее</a>
+          </div>
+          </div>
+           </div>
+    </div>
+    <div class="card" draggable="true">Task 5</div>
+  </div>
+  <div class="column">
+    <div class="column-header">To fix</div>
+    <div class="ui fluid small card" draggable="true">
+         <div class="content">
+          <a class="header">Задание 1</a>
+          <div class="meta">
+              <span class="date">Soft deadline: 1</span>
+          </div>
+          <div class="meta">
+              <span class="date">Deadline: 2</span>
+          </div>
+          <div class="meta">
+              <span class="date">Срок сдачи: 10.03.2023</span>
+          </div>
+          <div class="extra content">
+          <div class="ui two buttons">
+              <a class="ui basic blue button">Подробнее</a>
+          </div>
+          </div>
+           </div>
+    </div>
+    <div class="card" draggable="true">Task 5</div>
+  </div>
+  <div class="column">
+    <div class="column-header">Done</div>
+    <div class="ui fluid small card" draggable="true">
+         <div class="content">
+          <a class="header">Задание 1</a>
+          <div class="meta">
+              <span class="date">Soft deadline: 1</span>
+          </div>
+          <div class="meta">
+              <span class="date">Deadline: 2</span>
+          </div>
+          <div class="meta">
+              <span class="date">Срок сдачи: 10.03.2023</span>
+          </div>
+          <div class="extra content">
+          <div class="ui two buttons">
+              <a class="ui basic blue button">Подробнее</a>
+          </div>
+          </div>
+           </div>
+    </div>
+    <div class="ui fluid small card" draggable="true">
+         <div class="content">
+          <a class="header">Задание 1</a>
+          <div class="meta">
+              <span class="date">Soft deadline: 1</span>
+          </div>
+          <div class="meta">
+              <span class="date">Deadline: 2</span>
+          </div>
+          <div class="meta">
+              <span class="date">Срок сдачи: 10.03.2023</span>
+          </div>
+          <div class="extra content">
+          <div class="ui two buttons">
+              <a class="ui basic blue button">Подробнее</a>
+          </div>
+          </div>
+           </div>
+    </div>
+     <div class="ui fluid small card" draggable="true">
+         <div class="content">
+          <a class="header">Задание 1</a>
+          <div class="meta">
+              <span class="date">Soft deadline: 1</span>
+          </div>
+          <div class="meta">
+              <span class="date">Deadline: 2</span>
+          </div>
+          <div class="meta">
+              <span class="date">Срок сдачи: 10.03.2023</span>
+          </div>
+          <div class="extra content">
+          <div class="ui two buttons">
+              <a class="ui basic blue button">Подробнее</a>
+          </div>
+          </div>
+           </div>
+    </div>
+  </div>
+</div>
+
+
 	</div>
 {% endblock %}

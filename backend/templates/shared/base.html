@@ -18,7 +18,13 @@
      <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='css/semantic.min.css') }}">
         <script type="text/javascript" src="{{ url_for('static', path='js/semantic.min.js') }}"></script>
 
-
+<style>
+    @tabletBreakpoint : 768px;
+@scrollbarWidth : 17px; /* This is a constant */
+ /* In container.variables */
+@tabletMinimumGutter : (@emSize  * 1); /* require 1em gutter */
+@tabletWidth : @tabletBreakpoint - (@tabletMinimumGutter * 2) - @scrollbarWidth;
+</style>
 
 </head>
 
