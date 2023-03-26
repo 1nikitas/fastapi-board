@@ -60,12 +60,11 @@
       margin: 0 10px 20px 0;
     }
 </style>
-
 <script>
 document.addEventListener("dragstart", function(event) {
   if (event.target.classList.contains("card")) {
     draggedCard = event.target;
-    event.dataTransfer.setData("text/plain", event.target.textContent);
+    event.dataTransfer.setData("text/plain", event.target.dataset.taskId);
     event.target.style.opacity = "0.5";
   }
 });
@@ -98,37 +97,101 @@ document.addEventListener("drop", function(event) {
     event.preventDefault();
     event.target.appendChild(draggedCard);
     draggedCard = null;
+
+    // отправляем AJAX-запрос на сервер для изменения статуса задачи
+    const taskId = event.target.lastChild.dataset.taskId;
+    const column = event.target.parentNode.dataset.column;
+    $.ajax({
+  type: "POST",
+  url: "/update-task-status/",
+  data: JSON.stringify({'id': taskId, 'status': column}),
+  contentType: "application/json",
+  success: function(response) {
+    console.log(response);
+  },
+  error: function(xhr, status, error) {
+    console.log(xhr.responseText);
   }
 });
-</script>
 
 
-<script>
-    $(document).ready(function() {
-  // Обработчик перемещения карточки между списками
-  $('.card-list').sortable({
-    connectWith: '.card-list',
-    stop: function(event, ui) {
-      var cardTitle = ui.item.text();
-      var newColumnTitle = ui.item.parent().siblings('.column-title').text();
-      var cardId = ui.item.attr('data-card-id');
+  }
+});
 
-      // AJAX запрос на сервер для обновления данных
-      $.ajax({
-        url: '/update-card',
-        method: 'POST',
-        data: { cardId: cardId, columnTitle: newColumnTitle },
-        success: function(response) {
-          console.log('Название столбца обновлено');
-        },
-        error: function(error) {
-          console.log('Ошибка обновления названия столбца');
-        }
-      });
+// Объявляем переменные для хранения элементов, которые будут перемещаться
+let draggedCard = null;
+let draggedCardId = null;
+
+// Функция для отправки запроса на изменение статуса задачи
+function updateTaskStatus(taskId, newStatus) {
+  $.ajax({
+    url: "/update-task-status/",
+    type: "POST",
+    data: { id: taskId, status: newStatus },
+    success: function(response) {
+      console.log(response);
+    },
+    error: function(xhr) {
+      console.log(xhr.responseText);
     }
   });
+}
+
+// Обработчик события dragstart для начала перетаскивания карточки
+document.addEventListener("dragstart", function(event) {
+  if (event.target.classList.contains("card")) {
+    draggedCard = event.target;
+    draggedCardId = event.target.dataset.taskId;
+    event.dataTransfer.setData("text/plain", draggedCardId);
+    event.target.style.opacity = "0.5";
+  }
 });
+
+// Обработчик события dragend для окончания перетаскивания карточки
+document.addEventListener("dragend", function(event) {
+  if (event.target.classList.contains("card")) {
+    event.target.style.opacity = "1";
+  }
+});
+
+// Обработчик события dragenter для входа курсора в область другого столбца
+document.addEventListener("dragenter", function(event) {
+  if (event.target.classList.contains("column")) {
+    event.target.style.border = "2px dotted #ccc";
+  }
+});
+
+// Обработчик события dragleave для выхода курсора из области другого столбца
+document.addEventListener("dragleave", function(event) {
+  if (event.target.classList.contains("column")) {
+    event.target.style.border = "";
+  }
+});
+
+// Обработчик события dragover для перемещения карточки в другой столбец
+document.addEventListener("dragover", function(event) {
+  event.dataTransfer.dropEffect = "move";
+  event.preventDefault();
+});
+
+// Обработчик события drop для завершения перемещения карточки в другой столбец
+document.addEventListener("drop", function(event) {
+  if (event.target.classList.contains("column") && draggedCard !== null) {
+    event.preventDefault();
+    event.target.appendChild(draggedCard);
+    draggedCard = null;
+    // Определяем название столбца, в который была перемещена карточка
+    const newColumn = event.target.dataset.status;
+    // Отправляем запрос на изменение статуса задачи
+    updateTaskStatus(draggedCardId, newColumn);
+  }
+});
+
 </script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <div class="ui container">
 		<!-- Заголовок страницы -->
@@ -139,185 +202,142 @@ document.addEventListener("drop", function(event) {
                 <label></label>
             </div>
         </div>
-<!--		 Маленькие карточки с домашним заданием-->
-<!--        {% for task in tasks %}-->
-<!--                <div class="ui stackable grid">-->
-<!--                    <div class="board">-->
-<!--                        <div class="column">-->
-<!--                            <div class="ui fluid card">-->
-<!--                                <div class="content">-->
-<!--                                    <a class="header">Задание 1</a>-->
-<!--                                    <div class="meta">-->
-<!--                                        <span class="date">Soft deadline: {{ task.soft_deadline }}</span>-->
-<!--                                    </div>-->
-<!--                                    <div class="meta">-->
-<!--                                        <span class="date">Deadline: {{ task.deadline }}</span>-->
-<!--                                    </div>-->
-<!--                                    <div class="meta">-->
-<!--                                        <span class="date">Срок сдачи: 10.03.2023</span>-->
-<!--                                    </div>-->
-
-<!--                                </div>-->
-<!--                                <div class="extra content">-->
-<!--                                    <div class="ui two buttons">-->
-<!--                                        <button class="ui basic green button">Сдать</button>-->
-<!--                                        <a class="ui basic blue button" href="/details/{{ task.id }}">Подробности</a>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--        {% endfor %}-->
 
   <div class="board">
   <div class="column">
+
     <div class="column-header">To do</div>
-    <div class="ui fluid small card" draggable="true">
+
+      <div class="ui small card positive message" draggable="true">
          <div class="content">
-          <a class="header">Задание 1</a>
-          <div class="meta">
-              <span class="date">Soft deadline: 1</span>
-          </div>
-          <div class="meta">
-              <span class="date">Deadline: 2</span>
-          </div>
-          <div class="meta">
-              <span class="date">Срок сдачи: 10.03.2023</span>
-          </div>
-          <div class="extra content">
-          <div class="ui two buttons">
-              <a class="ui basic blue button">Подробнее</a>
-          </div>
-          </div>
-           </div>
+          <span class="meta">Column with tasks to do</span>
+
+         </div>
     </div>
-    <div class="ui fluid small card" draggable="true">
-         <div class="content">
-          <a class="header">Задание 1</a>
-          <div class="meta">
-              <span class="date">Soft deadline: 1</span>
-          </div>
-          <div class="meta">
-              <span class="date">Deadline: 2</span>
-          </div>
-          <div class="meta">
-              <span class="date">Срок сдачи: 10.03.2023</span>
-          </div>
-          <div class="extra content">
-          <div class="ui two buttons">
-              <a class="ui basic blue button">Подробнее</a>
-          </div>
-          </div>
-           </div>
-    </div>
+      {% for task in tasks %}
+        {% if task.status == 'todo' %}
+            <div class="card-list">
+                    <div class="ui fluid small card" draggable="true" data-task-id="{{ task.id }}">
+                         <div class="content">
+                        <a class="header"></a>
+                             <a class="header">{{task.title}}</a>
+                          <div class="meta">
+                              <span class="date">Soft deadline: {{task.soft_deadline}}</span>
+                          </div>
+                          <div class="meta">
+                              <span class="date">Deadline: {{task.deadline}}</span>
+                          </div>
+                          <div class="extra content">
+                          <div class="ui two buttons">
+                              <a class="ui basic blue button" href="/details/{{ task.id }}">Подробнее</a>
+                          </div>
+                          </div>
+                         </div>
+                    </div>
+            </div>
+        {% endif %}
+      {% endfor %}
 
   </div>
   <div class="column">
     <div class="column-header">In progress</div>
-     <div class="ui fluid small card" draggable="true">
+      <div class="ui small card positive message" draggable="true">
          <div class="content">
-          <a class="header">Задание 1</a>
-          <div class="meta">
-              <span class="date">Soft deadline: 1</span>
-          </div>
-          <div class="meta">
-              <span class="date">Deadline: 2</span>
-          </div>
-          <div class="meta">
-              <span class="date">Срок сдачи: 10.03.2023</span>
-          </div>
-          <div class="extra content">
-          <div class="ui two buttons">
-              <a class="ui basic blue button">Подробнее</a>
-          </div>
-          </div>
-           </div>
+          <span class="meta">Column with tasks you have already started</span>
+
+         </div>
     </div>
-    <div class="card" draggable="true">Task 5</div>
+
+     {% for task in tasks %}
+        {% if task.status == 'in progress' %}
+                    <div class="ui fluid small card" draggable="true">
+                         <div class="content">
+
+                          <a class="header">{{task.title}}</a>
+                          <div class="meta">
+                              <span class="date">Soft deadline: 1</span>
+                          </div>
+                          <div class="meta">
+                              <span class="date">Deadline: 2</span>
+                          </div>
+                          <div class="meta">
+                              <span class="date">Срок сдачи: 10.03.2023</span>
+                          </div>
+                          <div class="extra content">
+                          <div class="ui two buttons">
+                                <a class="ui basic blue button" href="/details/{{ task.id }}">Подробнее</a>                          </div>
+                          </div>
+                         </div>
+                    </div>
+        {% endif %}
+      {% endfor %}
   </div>
   <div class="column">
     <div class="column-header">To fix</div>
-    <div class="ui fluid small card" draggable="true">
+       <div class="ui small card positive message" draggable="true">
          <div class="content">
-          <a class="header">Задание 1</a>
-          <div class="meta">
-              <span class="date">Soft deadline: 1</span>
-          </div>
-          <div class="meta">
-              <span class="date">Deadline: 2</span>
-          </div>
-          <div class="meta">
-              <span class="date">Срок сдачи: 10.03.2023</span>
-          </div>
-          <div class="extra content">
-          <div class="ui two buttons">
-              <a class="ui basic blue button">Подробнее</a>
-          </div>
-          </div>
-           </div>
+          <span class="meta">Column with tasks to need to fix</span>
+
+         </div>
     </div>
-    <div class="card" draggable="true">Task 5</div>
+    {% for task in tasks %}
+        {% if task.status == 'to fix' %}
+                    <div class="ui fluid small card" draggable="true">
+                         <div class="content">
+
+                          <a class="header">{{task.title}}</a>
+                          <div class="meta">
+                              <span class="date">Soft deadline: 1</span>
+                          </div>
+                          <div class="meta">
+                              <span class="date">Deadline: 2</span>
+                          </div>
+                          <div class="meta">
+                              <span class="date">Срок сдачи: 10.03.2023</span>
+                          </div>
+                          <div class="extra content">
+                          <div class="ui two buttons">
+                               <a class="ui basic blue button" href="/details/{{ task.id }}">Подробнее</a>
+                          </div>
+                          </div>
+                         </div>
+                    </div>
+        {% endif %}
+      {% endfor %}
   </div>
   <div class="column">
     <div class="column-header">Done</div>
-    <div class="ui fluid small card" draggable="true">
+       <div class="ui small card positive message" draggable="true">
          <div class="content">
-          <a class="header">Задание 1</a>
-          <div class="meta">
-              <span class="date">Soft deadline: 1</span>
-          </div>
-          <div class="meta">
-              <span class="date">Deadline: 2</span>
-          </div>
-          <div class="meta">
-              <span class="date">Срок сдачи: 10.03.2023</span>
-          </div>
-          <div class="extra content">
-          <div class="ui two buttons">
-              <a class="ui basic blue button">Подробнее</a>
-          </div>
-          </div>
-           </div>
+          <span class="meta">Column with tasks to have done</span>
+
+         </div>
     </div>
-    <div class="ui fluid small card" draggable="true">
-         <div class="content">
-          <a class="header">Задание 1</a>
-          <div class="meta">
-              <span class="date">Soft deadline: 1</span>
-          </div>
-          <div class="meta">
-              <span class="date">Deadline: 2</span>
-          </div>
-          <div class="meta">
-              <span class="date">Срок сдачи: 10.03.2023</span>
-          </div>
-          <div class="extra content">
-          <div class="ui two buttons">
-              <a class="ui basic blue button">Подробнее</a>
-          </div>
-          </div>
-           </div>
-    </div>
-     <div class="ui fluid small card" draggable="true">
-         <div class="content">
-          <a class="header">Задание 1</a>
-          <div class="meta">
-              <span class="date">Soft deadline: 1</span>
-          </div>
-          <div class="meta">
-              <span class="date">Deadline: 2</span>
-          </div>
-          <div class="meta">
-              <span class="date">Срок сдачи: 10.03.2023</span>
-          </div>
-          <div class="extra content">
-          <div class="ui two buttons">
-              <a class="ui basic blue button">Подробнее</a>
-          </div>
-          </div>
-           </div>
-    </div>
+    {% for task in tasks %}
+        {% if task.status == 'done' %}
+                    <div class="ui fluid small card " draggable="true">
+                         <div class="content">
+
+                          <a class="header">{{task.title}}</a>
+                          <div class="meta">
+                              <span class="date">Soft deadline: 1</span>
+                          </div>
+                          <div class="meta">
+                              <span class="date">Deadline: 2</span>
+                          </div>
+                          <div class="meta">
+                              <span class="date">Срок сдачи: 10.03.2023</span>
+                          </div>
+                          <div class="extra content">
+                          <div class="ui two buttons">
+                               <a class="ui basic blue button" href="/details/{{ task.id }}">Подробнее</a>
+                          </div>
+                          </div>
+                         </div>
+                    </div>
+        {% endif %}
+      {% endfor %}
+
   </div>
 </div>
 

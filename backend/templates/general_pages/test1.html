@@ -1,0 +1,26 @@
+<script>
+$(document).ready(function() {
+  // Обработчик перемещения карточки между списками
+  $('.ui.fluid.small.card').sortable({
+    connectWith: '.ui.fluid.small.card',
+    stop: function(event, ui) {
+      var cardTitle = ui.item.text();
+      var newColumnTitle = ui.item.parent().siblings('.column-header').text();
+      var cardId = ui.item.attr('task-id');
+
+      // AJAX запрос на сервер для обновления данных
+      $.ajax({
+        url: '/update-task-status/',
+        method: 'POST',
+        data: { cardId: cardId, newStatus: newColumnTitle },
+        success: function(response) {
+          console.log('Статус карточки обновлен');
+        },
+        error: function(error) {
+          console.log('Ошибка обновления статуса карточки');
+        }
+      });
+    }
+  });
+});
+</script>
