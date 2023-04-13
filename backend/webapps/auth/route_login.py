@@ -2,7 +2,7 @@
 from apis.version1.route_login import login_for_access_token
 from db.repository.tasks import list_tasks
 from db.session import get_db
-from fastapi import APIRouter
+from fastapi import APIRouter, Form
 from fastapi import Depends
 from fastapi import HTTPException
 from fastapi import Request
@@ -45,4 +45,42 @@ async def login(request: Request, db: Session = Depends(get_db)):
             form.__dict__.get("errors").append("Incorrect Email or Password")
             return templates.TemplateResponse("auth/login.html", form.__dict__)
     # return templates.TemplateResponse("general_pages/homepage.html", form.__dict__)
+
+@router.get("/register")
+async def register(request: Request):
+    return templates.TemplateResponse("auth/register.html", {"request": request})
+@router.post("/register")
+async def register(
+    email: str = Form(...),
+    username: str = Form(...),
+    password: str = Form(...),
+    confirm_password: str = Form(...),
+    full_name: str = Form(...),
+    gender: str = Form(...),
+    city: str = Form(""),
+    state: str = Form(""),
+    credit_card_type: str = Form(...),
+    credit_card_number: str = Form(...),
+    cvc: str = Form(...),
+    exp_month: str = Form(...),
+    exp_year: str = Form(...),
+):
+    # Process the form data here and return it as a JSON response
+    data = {
+        "email": email,
+        "username": username,
+        "password": password,
+        "confirm_password": confirm_password,
+        "full_name": full_name,
+        "gender": gender,
+        "city": city,
+        "state": state,
+        "credit_card_type": credit_card_type,
+        "credit_card_number": credit_card_number,
+        "cvc": cvc,
+        "exp_month": exp_month,
+        "exp_year": exp_year,
+    }
+    print(data)
+
 

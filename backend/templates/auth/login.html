@@ -1,78 +1,253 @@
-{% extends "shared/base.html" %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Basic Page Info -->
+<!-- Basic Page Info -->
+		<title>Репетириум</title>
+
+		<!-- Site favicon -->
+		<link
+			rel="apple-touch-icon"
+			sizes="180x180"
+			href="{{ url_for('static', path='vendors/images/apple-touch-icon.png') }}"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="32x32"
+			href="{{ url_for('static', path='vendors/images/favicon-32x32.png') }}"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="16x16"
+			href="{{ url_for('static', path='vendors/images/favicon-16x16.png') }}"
+
+		/>
+
+		<!-- Mobile Specific Metas -->
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1"
+		/>
+
+		<!-- Google Font -->
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+			rel="stylesheet"
+		/>
+		<!-- CSS -->
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', path='vendors/styles/core.css') }}"  />
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="{{ url_for('static', path='vendors/styles/icon-font.min.css') }} "
+		/>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', path='vendors/styles/style.css') }}"/>
 
 
-{% block title %}
-  <title>Login</title>
-{% endblock %}
 
-{% block content %}
-<!--  <div class="container">-->
-<!--    <div class="row">-->
-<!--      <h5 class="display-5">Login to Board</h5>-->
-<!--      <div class="text-danger font-weight-bold">-->
-<!--          {% for error in errors %}-->
-<!--            <li>{{error}}</li>-->
-<!--          {% endfor %}-->
-<!--      </div>-->
-<!--      <div class="text-success font-weight-bold">-->
-<!--        {% if msg %}-->
-<!--        <div class="badge bg-success text-wrap font-weight-bold" style="font-size: large;">-->
-<!--          {{msg}}-->
-<!--        </div>-->
-<!--        {% endif %}-->
-<!--    </div>-->
-<!--    </div>-->
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script
+			async
+			src="https://www.googletagmanager.com/gtag/js?id=G-GBZ3SGGX85"
+		></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag("js", new Date());
 
-<!--    <div class="row my-5">-->
-<!--      <form method="POST">-->
-<!--        <div class="mb-3">-->
-<!--          <label>Email</label>-->
-<!--          <input type="text" required placeholder="Your email" name="email" value="{{email}}" class="form-control">-->
-<!--        </div>-->
-<!--        <div class="mb-3">-->
-<!--          <label>Password</label>-->
-<!--          <input type="password" required placeholder="Choose a secure password" value="{{password}}" name="password" class="form-control">-->
-<!--        </div>-->
-<!--        <button type="submit" class="btn btn-primary">Submit</button>-->
-<!--      </form>-->
-<!--    </div>-->
-<!--  </div>-->
+			gtag("config", "G-GBZ3SGGX85");
+		</script>
+		<!-- Google Tag Manager -->
+		<script>
+			(function (w, d, s, l, i) {
+				w[l] = w[l] || [];
+				w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+				var f = d.getElementsByTagName(s)[0],
+					j = d.createElement(s),
+					dl = l != "dataLayer" ? "&l=" + l : "";
+				j.async = true;
+				j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+				f.parentNode.insertBefore(j, f);
+			})(window, document, "script", "dataLayer", "GTM-NXZMQSS");
+		</script>
+		<!-- End Google Tag Manager -->
+	</head>
+	<body class="login-page">
+		<div class="login-header box-shadow">
+			<div
+				class="container-fluid d-flex justify-content-between align-items-center"
+			>
+				<div class="brand-logo">
+					<a href="login.html">
+						<img src="vendors/images/deskapp-logo.svg" alt="" />
+					</a>
+				</div>
+				<div class="login-menu">
+					<ul>
+						<li><a href="register.html">Register</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div
+			class="login-wrap d-flex align-items-center flex-wrap justify-content-center"
+		>
+			<div class="container">
+				<div class="row align-items-center">
+					<div class="col-md-6 col-lg-7">
+						<img src="{{ url_for('static', path='vendors/images/login-page-img.png') }}" alt="" />
+					</div>
+					<div class="col-md-6 col-lg-5">
+						<div class="login-box bg-white box-shadow border-radius-10">
+							<div class="login-title">
+								<h2 class="text-center text-primary">Login to Tutarium</h2>
+							</div>
+							<form>
+								<div class="select-role">
+									<div class="btn-group btn-group-toggle" data-toggle="buttons">
+										<label class="btn active">
+											<input type="radio" name="options" id="admin" />
+											<div class="icon">
+												<img
+													src="{{ url_for('static', path='vendors/images/briefcase.svg') }}"
+													class="svg"
+													alt=""
+												/>
+											</div>
+											<span>I'm</span>
+											Teacher
+										</label>
+										<label class="btn">
+											<input type="radio" name="options" id="user" />
+											<div class="icon">
+												<img
+													src="{{ url_for('static', path='vendors/images/person.svg') }}"
+													class="svg"
+													alt=""
+												/>
+											</div>
+											<span>I'm</span>
+											Student
+										</label>
+									</div>
+								</div>
+								<div class="input-group custom">
+									<input
+										type="text"
+										class="form-control form-control-lg"
+										placeholder="Username"
+									/>
+									<div class="input-group-append custom">
+										<span class="input-group-text"
+											><i class="icon-copy dw dw-user1"></i
+										></span>
+									</div>
+								</div>
+								<div class="input-group custom">
+									<input
+										type="password"
+										class="form-control form-control-lg"
+										placeholder="**********"
+									/>
+									<div class="input-group-append custom">
+										<span class="input-group-text"
+											><i class="dw dw-padlock1"></i
+										></span>
+									</div>
+								</div>
+								<div class="row pb-30">
+									<div class="col-6">
+										<div class="custom-control custom-checkbox">
+											<input
+												type="checkbox"
+												class="custom-control-input"
+												id="customCheck1"
+											/>
+											<label class="custom-control-label" for="customCheck1"
+												>Remember</label
+											>
+										</div>
+									</div>
+									<div class="col-6">
+										<div class="forgot-password">
+											<a href="forgot-password.html">Forgot Password</a>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="input-group mb-0">
+											<!--
+											use code for form submit
+											<input class="btn btn-primary btn-lg btn-block" type="submit" value="Sign In">
+										-->
+											<a
+												class="btn btn-primary btn-lg btn-block"
+												href="index.html"
+												>Sign In</a
+											>
+										</div>
+										<div
+											class="font-16 weight-600 pt-10 pb-10 text-center"
+											data-color="#707373"
+										>
+											OR
+										</div>
+										<div class="input-group mb-0">
+											<a
+												class="btn btn-outline-primary btn-lg btn-block"
+												href="register.html"
+												>Register To Create Account</a
+											>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- welcome modal start -->
+		<div class="welcome-modal">
+			<button class="welcome-modal-close">
+				<i class="bi bi-x-lg"></i>
+			</button>
+			<iframe
+				class="w-100 border-0"
+				src="https://embed.lottiefiles.com/animation/31548"
+			></iframe>
+			<div class="text-center">
+				<h3 class="h5 weight-500 text-center mb-2">
+					Hi, I'm a support bot
+					<span role="img" aria-label="gratitude">❤️</span>
+				</h3>
+				<button class="btn btn-outline-primary">Text to me</button>
+			</div>
 
-<div class="ui restricted placeholder segment">
-  <div class="ui two column very relaxed stackable grid">
-    <div class="column">
-      <div class="ui form">
-        <form method="POST">
-        <div class="field">
-          <label>Username</label>
-          <div class="ui left icon input">
-            <input type="text" required placeholder="Your email" name="email" value="{{email}}">
-            <i class="user icon"></i>
-          </div>
-        </div>
-        <div class="field">
-          <label>Password</label>
-          <div class="ui left icon input">
-            <input type="password" required placeholder="Your password" value="{{password}}" name="password">
-            <i class="lock icon"></i>
-          </div>
-        </div>
-          <div><button type="submit" class="ui black submit button">Login</button></div>
-      </form>
-      </div>
-
-    </div>
-    <div class="middle aligned column">
-      <div class="ui big button">
-        <a href="/register/" class=""><i class="signup icon"></i></a>
-      </div>
-    </div>
-  </div>
-  <div class="ui vertical divider">
-    Or
-  </div>
-</div>
-
-
-  {% endblock %}
-
+		</div>
+		<button class="welcome-modal-btn">
+			<i></i> Support
+		</button>
+		<!-- welcome modal end -->
+		<!-- js -->
+		<script src="{{ url_for('static', path='vendors/scripts/core.js') }}"></script>
+		<script src="{{ url_for('static', path='vendors/scripts/script.min.js') }}"></script>
+		<script src="{{ url_for('static', path='vendors/scripts/process.js') }}"></script>
+		<script src="{{ url_for('static', path='vendors/scripts/layout-settings.js') }}"></script>
+		<!-- Google Tag Manager (noscript) -->
+		<noscript
+			><iframe
+				src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS"
+				height="0"
+				width="0"
+				style="display: none; visibility: hidden"
+			></iframe
+		></noscript>
+		<!-- End Google Tag Manager (noscript) -->
+	</body>
+</html>

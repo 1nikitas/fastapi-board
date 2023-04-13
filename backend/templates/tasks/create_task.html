@@ -17,7 +17,7 @@
 
     <div class="row my-5">
       <h3 class="text-center display-4">Create a Job Post</h3>
-      <form method="POST">
+      <form method="POST" enctype="multipart/form-data">
         <div class="mb-3">
           <input type="text" required class="form-control" name="title" value="{{title}}" placeholder="Homework title">
         </div>
@@ -31,55 +31,23 @@
           <input type="text" required placeholder="Deadline" name="deadline" value="{{deadline}}" class="form-control">
         </div>
         <div class="mb-3">
-
-<script>
-function setter() {
-    var elem_val = 0;
-
-    var go = document.getElementsByClassName('ui dropdown');
-    for (var i = 0; go[i]; i++) {
-
-        elem_val = go[i].value;
-
-    }
-
-    document.getElementById("assigned_to").value = elem_val;
-
-}
-
-</script>
-
-
-
-  <div class="ui input focus">
-    <input placeholder="Client id"  name="assigned_to" value="{{assigned_to}}" id="assigned_to">
-
-  <select class="ui dropdown" onchange="setter();">
-    {% for client in all_clients %}
-    <option value="{{ client.id }}">{{ client.name }}</option>
-    {% endfor %}
-  </select>
-    </div>
-
-
-
+          <select class="form-select" aria-label="Client" name="assigned_to">
+            {% for client in all_clients %}
+              <option value="{{ client.id }}" {% if client.id == assigned_to %}selected{% endif %}>{{ client.name }}</option>
+            {% endfor %}
+          </select>
         </div>
         <div class="mb-3">
           <label for="exampleFormControlTextarea1" class="form-label">Description</label>
           <textarea class="form-control" required name="description" id="exampleFormControlTextarea1" rows="3">{{description}}</textarea>
           <div id="help" class="form-text">Please provide complete Job description,requirements,perks and benefits.</div>
-
         </div>
-                <div class="ui placeholder segment">
-          <div class="ui icon header">
-            <i cl ass="pdf file outline icon"></i>
-            No documents are listed for this customer.
-          </div>
-          <div class="ui primary button">Add Document</div>
+        <div class="mb-3">
+          <label class="form-label">Add Document</label>
+          <input class="form-control" type="file" name="file">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
-
       </form>
     </div>
   </div>
-  {% endblock %}
+{% endblock %}

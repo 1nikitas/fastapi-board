@@ -1,7 +1,6 @@
-from typing import List
-from typing import Optional
-
-from fastapi import Request
+from typing import List, Optional
+from fastapi import Request, UploadFile
+from aiofiles import open
 
 
 class TaskCreateForm:
@@ -14,6 +13,7 @@ class TaskCreateForm:
         self.deadline: Optional[str] = None
         self.assigned_to: Optional[str] = None
         self.description: Optional[str] = None
+        self.files: Optional[List[UploadFile]] = None
 
     async def load_data(self):
         form = await self.request.form()
@@ -23,16 +23,29 @@ class TaskCreateForm:
         self.deadline= form.get('deadline')
         self.assigned_to= form.get('assigned_to')
         self.description= form.get('description')
+        self.files = form.getlist('files')
+
+    async def save_files(self) -> List[str]:
+        saved_files = []
+        if self.files:
+            for file in self.files:
+                contents = await file.read()
+                async with open(file.filename, 'wb') as f:
+                    await f.write(contents)
+                saved_files.append(file.filename)
+        return saved_files
 
     def is_valid(self):
-        # if not self.title or not len(self.title) >= 4:
-        #     self.errors.append("A valid title is required")
-        # if not self.company_url or not (self.company_url.__contains__("http")):
-        #     self.errors.append("Valid Url is required e.g. https://example.com")
-        # if not self.company or not len(self.company) >= 1:
-        #     self.errors.append("A valid company is required")
-        # if not self.description or not len(self.description) >= 20:
-        #     self.errors.append("Description too short")
+        if not self.title or not len(self.title) >= 4:
+            self.errors.append("A valid title is required")
+        if not self.subject or not len(self.subject) >= 1:
+            self.errors.append("A valid subject is required")
+        if not self.soft_deadline:
+            self.errors.append("A valid soft deadline is required")
+        if not self.deadline:
+            self.errors.append("A valid deadline is required")
+        if not self.description or not len(self.description) >= 20:
+            self.errors.append("Description too short")
         if not self.errors:
             return True
         return False

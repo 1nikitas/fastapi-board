@@ -6,7 +6,7 @@ from webapps.clients import route_clients
 from webapps.analytics import route_analytics
 from fastapi import Request
 from notifications.email import route_emailing
-
+from webapps import router_test
 
 api_router = APIRouter()
 api_router.include_router(route_tasks.router, prefix="", tags=["job-webapp"])
@@ -15,3 +15,4 @@ api_router.include_router(route_login.router, prefix="", tags=["auth-webapp"])
 api_router.include_router(route_clients.router, prefix="", tags=["clients-webapp"])
 api_router.include_router(route_analytics.router, prefix="", tags=['clients-webapp'])
 api_router.include_router(route_emailing.router, prefix="", tags=['email-webapp'])
+api_router.include_router(router_test.router, prefix="", tags=['email-webapp'])

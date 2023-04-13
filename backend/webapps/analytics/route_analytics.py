@@ -32,3 +32,4 @@ def analytics(request: Request):
 def month_clients(request: Request, db: Session = Depends(get_db)):
     expected_money = get_month_money(db=db)
     return templates.TemplateResponse("analytics/month_analytics.html", {'request': request, 'expected_money': expected_money})
+

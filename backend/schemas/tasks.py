@@ -10,10 +10,11 @@ class TaskBase(BaseModel):
     subject: Optional[str] = None
     description: Optional[str] = None
     soft_deadline: Optional[str] = None
+    status: Optional[str] = None
     deadline: Optional[str] = None
     assigned_to: Optional[str] = None
     date_posted: Optional[date] = datetime.now().date()
-
+    file_url: Optional[list] = None
 
 # this will be used to validate data while creating a Job
 class TaskCreate(TaskBase):
@@ -22,7 +23,7 @@ class TaskCreate(TaskBase):
     description: str
     soft_deadline: str
     deadline: str
-
+    file_url: Optional[list] = None
 
 
 # this will be used to format the response to not to have id,owner_id etc
@@ -33,5 +34,6 @@ class TaskShow(TaskBase):
     soft_deadline: str
     deadline: str
     date_posted: date
+    file_url: Optional[list] = None
     class Config:  # to convert non dict obj to json
         orm_mode = True

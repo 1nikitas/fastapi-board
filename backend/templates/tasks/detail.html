@@ -1,6 +1,5 @@
 {% extends "shared/base.html" %}
 
-
 {% block title %}
   <title>Job Detail</title>
 {% endblock %}
@@ -46,6 +45,12 @@
               <th scope="row">Homework description</th>
               <td colspan="2">{{task.description}}</td>
             </tr>
+            {% if task.file_url %}
+            <tr>
+              <th scope="row">File</th>
+              <td colspan="2"><a href="{{ task.file_url }}">{{ task.file_url }}</a></td>
+            </tr>
+            {% endif %}
           </tbody>
       </table>
   </div>
